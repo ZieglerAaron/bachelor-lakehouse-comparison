@@ -42,28 +42,54 @@ Die Spark-Konfiguration befindet sich in `spark-config/spark-defaults.conf`.
 - Secret Key: `minioadmin`
 - Endpoint: `http://localhost:9000`
 
-## Beispiel-Anwendung
+## Beispiel-Anwendungen
 
-### CSV zu Delta Konvertierung
-Die Datei `spark-apps/csv_to_delta.py` zeigt, wie CSV-Daten in Delta-Format konvertiert werden.
+### CSV zu Delta Konvertierung (Original-Repo)
+Die Datei `spark-apps/csv_to_delta.py` aus dem Original-Repo zeigt eine einfache CSV-zu-Delta-Konvertierung:
 
 ```python
-from pyspark.sql import SparkSession
 from delta.tables import DeltaTable
+from pyspark.sql import SparkSession
 
-# Spark Session mit Delta Lake
-spark = SparkSession.builder \
-    .appName("CSV to Delta") \
-    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
-    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
-    .getOrCreate()
+def main():
+    source_bucket = "wba"
+    
+    spark = SparkSession.builder \
+        .appName("CSV File to Delta Lake Table") \
+        .enableHiveSupport() \
+        .getOrCreate()
 
-# CSV lesen
-df = spark.read.csv("s3a://delta/input/sample.csv", header=True)
+    input_path = f"s3a://{source_bucket}/test-data/people-100.csv"
+    delta_path = f"s3a://{source_bucket}/delta/wba/tables/"
 
-# Als Delta schreiben
-df.write.format("delta").mode("overwrite").save("s3a://delta/output/sample_delta")
+    # Datenbank erstellen und verwenden
+    spark.sql("CREATE DATABASE IF NOT EXISTS wba")
+    spark.sql("USE wba")
+
+    # CSV lesen und als Delta speichern
+    df = spark.read.csv(input_path, header=True, inferSchema=True)
+    df.write.format("delta").option("delta.columnMapping.mode", "name")\
+        .option("path", f'{delta_path}/test_table')\
+        .saveAsTable("wba.test_table")
+
+if __name__ == "__main__":
+    main()
 ```
+
+### Erweiterte CSV zu Delta Konvertierung
+Die Datei `spark-apps/csv_to_delta.py` (unser erweitertes Beispiel) zeigt zusätzliche Delta Lake Features:
+
+```python
+# Siehe die vollständige Implementierung in der Datei
+# - Beispieldaten erstellen
+# - CSV zu Delta Konvertierung
+# - Delta Lake Features demonstrieren (Merge-Operationen, Versionierung)
+```
+
+## Test-Daten
+
+Das Verzeichnis `test-data/` enthält Beispieldaten aus dem Original-Repo:
+- `people-100.csv`: 100 Beispieldatensätze für Tests
 
 ## MinIO Web UI
 
@@ -88,6 +114,15 @@ spark-submit \
   --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog \
   spark-apps/csv_to_delta.py
 ```
+
+## Dateien aus dem Original-Repo
+
+- `docker-compose.yml.original`: Ursprüngliche Docker Compose-Konfiguration mit erweiterten Services
+- `Dockerfile`: Custom Dockerfile für Hive Metastore
+- `hive-config/`: Erweiterte Hive-Konfigurationen
+- `spark-config/`: Erweiterte Spark-Konfigurationen
+- `spark-apps/csv_to_delta.py`: Einfache CSV-zu-Delta-Konvertierung
+- `test-data/`: Beispieldaten für Tests
 
 ## Troubleshooting
 

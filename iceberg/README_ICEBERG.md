@@ -38,6 +38,17 @@ Die Iceberg-Konfiguration befindet sich in `etc/catalog/iceberg.properties`.
 
 ## Beispiel-Queries
 
+### Setup-Script ausführen
+Das Setup-Script `scripts/iceberg-setup.sql` enthält alle notwendigen SQL-Befehle:
+
+```bash
+# Automatisch ausführen
+./scripts/iceberg-setup.sh
+
+# Oder manuell in Trino CLI
+docker exec -it iceberg-trino-1 trino
+```
+
 ### Tabelle erstellen
 ```sql
 CREATE SCHEMA IF NOT EXISTS iceberg.iceberg;
@@ -62,6 +73,12 @@ INSERT INTO iceberg.iceberg.sample_table VALUES
 ```sql
 SELECT * FROM iceberg.iceberg.sample_table;
 ```
+
+## Dateien aus dem Original-Repo
+
+- `docker-compose.yml.original`: Ursprüngliche Docker Compose-Konfiguration
+- `scripts/iceberg-setup.sql`: SQL-Setup-Script aus dem Original-Repo
+- `etc/`: Erweiterte Konfigurationsdateien
 
 ## MinIO Web UI
 

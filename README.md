@@ -54,22 +54,42 @@ bachelor-lakehouse-comparison/
 │
 ├── iceberg/
 │   ├── docker-compose.yml
+│   ├── docker-compose.yml.original    # Aus tschaub/trino-example
 │   ├── etc/
 │   │   └── catalog/iceberg.properties
 │   ├── scripts/
-│   │   └── iceberg-setup.sh
+│   │   ├── iceberg-setup.sh
+│   │   └── iceberg-setup.sql         # Aus tschaub/trino-example
 │   └── README_ICEBERG.md
 │
 └── delta/
     ├── docker-compose.yml
+    ├── docker-compose.yml.original    # Aus kemonoske/spark-minio-delta-lakehouse-docker
+    ├── Dockerfile                     # Aus kemonoske/spark-minio-delta-lakehouse-docker
     ├── hive-config/
     │   └── hive-site.xml
     ├── spark-config/
     │   └── spark-defaults.conf
     ├── spark-apps/
     │   └── csv_to_delta.py
+    ├── test-data/                     # Aus kemonoske/spark-minio-delta-lakehouse-docker
+    │   └── people-100.csv
     └── README_DELTA.md
 ```
+
+## Original-Repositories
+
+Dieses Monorepo basiert auf den folgenden Beispiel-Repositories:
+
+### Apache Iceberg Stack
+- **Quelle**: [tschaub/trino-example](https://github.com/tschaub/trino-example)
+- **Inhalte**: Docker Compose, SQL-Setup, Konfigurationsdateien
+- **Lizenz**: Apache 2.0
+
+### Delta Lake Stack  
+- **Quelle**: [kemonoske/spark-minio-delta-lakehouse-docker](https://github.com/kemonoske/spark-minio-delta-lakehouse-docker)
+- **Inhalte**: Docker Compose, Spark-Apps, Test-Daten, Konfigurationsdateien
+- **Lizenz**: Apache 2.0
 
 ## Bachelorarbeit
 
