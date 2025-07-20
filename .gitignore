@@ -1,0 +1,52 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Docker volumes (wenn sie als Bind Mounts verwendet werden)
+# data/
+# volumes/
+
+# JAR files (werden dynamisch heruntergeladen)
+*.jar
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spark
+spark-events/
+spark-logs/
+
+# MinIO data (wird in Docker volumes gespeichert)
+minio-data/
+
+# PostgreSQL data (wird in Docker volumes gespeichert)
+postgres-data/ 
