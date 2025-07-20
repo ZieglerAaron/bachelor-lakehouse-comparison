@@ -12,42 +12,32 @@ sleep 30
 # Verbinde zu Trino und führe Setup-Befehle aus
 echo "📝 Führe Iceberg-Setup aus..."
 
-docker exec -i iceberg-trino-1 trino << 'EOF'
-
--- Iceberg Catalog erstellen
-CREATE CATALOG IF NOT EXISTS iceberg WITH (
-    type = 'iceberg',
-    catalog-uri = 'thrift://hive-metastore:9083',
-    s3.endpoint = 'http://minio:9000',
-    s3.access-key = 'minioadmin',
-    s3.secret-key = 'minioadmin',
-    s3.path-style-access = true
-);
+docker exec -i iceberg-controller-1 trino << 'EOF'
 
 -- Schema erstellen
-CREATE SCHEMA IF NOT EXISTS iceberg.iceberg;
+CREATE SCHEMA IF NOT EXISTS example.iceberg;
 
 -- Beispiel-Tabelle erstellen
-CREATE TABLE IF NOT EXISTS iceberg.iceberg.sample_table (
+CREATE TABLE IF NOT EXISTS example.iceberg.sample_table (
     id BIGINT,
     name VARCHAR,
     created_at TIMESTAMP
 ) WITH (
     format = 'PARQUET',
-    location = 's3a://iceberg/sample_table/'
+    location = 's3://warehouse/sample_table/'
 );
 
 -- Test-Daten einfügen
-INSERT INTO iceberg.iceberg.sample_table VALUES 
+INSERT INTO example.iceberg.sample_table VALUES 
 (1, 'Test Datensatz 1', TIMESTAMP '2024-01-01 10:00:00'),
 (2, 'Test Datensatz 2', TIMESTAMP '2024-01-01 11:00:00'),
 (3, 'Test Datensatz 3', TIMESTAMP '2024-01-01 12:00:00');
 
 -- Tabellen auflisten
-SHOW TABLES FROM iceberg.iceberg;
+SHOW TABLES FROM example.iceberg;
 
 -- Test-Query ausführen
-SELECT * FROM iceberg.iceberg.sample_table;
+SELECT * FROM example.iceberg.sample_table;
 
 EOF
 
@@ -57,4 +47,4 @@ echo "🔗 MinIO Web UI: http://localhost:9001"
 echo "   Username: minioadmin"
 echo "   Password: minioadmin"
 echo ""
-echo "📊 Trino CLI: docker exec -it iceberg-trino-1 trino"
+echo "📊 Trino CLI: docker exec -it iceberg-controller-1 trino"
