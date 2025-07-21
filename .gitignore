@@ -50,3 +50,7 @@ minio-data/
 
 # PostgreSQL data (wird in Docker volumes gespeichert)
 postgres-data/ 
+
+# Airflow
+airflow/logs/
+airflow/__pycache__/ 
