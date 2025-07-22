@@ -1,3 +1,2 @@
 apache-airflow==2.8.1
 apache-airflow-providers-trino
-apache-airflow-providers-apache-spark
