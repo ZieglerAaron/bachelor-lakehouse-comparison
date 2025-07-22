@@ -1,8 +1,8 @@
 <configuration>
     <property>
         <name>hive.metastore.uris</name>
-        <value>thrift://host.docker.internal:9083</value> <!-- Accesing trough localhost to woid docker compose adding _wba-netwrok in hostname -->
-        <description>Thrift URI for the remote metastore. Used by metastore client to connect to remote metastore.</description>
+        <value>thrift://hive-metastore:9083</value>
+        <description>Thrift URI für den Metastore im Docker-Netzwerk.</description>
     </property>
     <property>
         <name>fs.defaultFS</name>
