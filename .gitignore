@@ -54,3 +54,14 @@ postgres-data/
 # Airflow
 airflow/logs/
 airflow/__pycache__/ 
+
+# MinIO Systemverzeichnisse und temporäre/verarbeitete Daten ignorieren
+/delta/test-data/.minio.sys/
+/delta/test-data/buckets/
+/delta/test-data/wba/
+/delta/test-data/tmp/
+/delta/test-data/format.json
+
+# Die Originaldatei von Docker Compose (docker-compose.yml.original) wird ignoriert,
+# da sie als Vorlage dient und nicht verändert oder versioniert werden soll.
+delta/docker-compose.yml.original
