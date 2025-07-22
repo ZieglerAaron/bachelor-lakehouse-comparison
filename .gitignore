@@ -65,3 +65,8 @@ airflow/__pycache__/
 # Die Originaldatei von Docker Compose (docker-compose.yml.original) wird ignoriert,
 # da sie als Vorlage dient und nicht verändert oder versioniert werden soll.
 delta/docker-compose.yml.original
+
+metastore_db/
+warehouse/
+derby.log
+Tests/B/
