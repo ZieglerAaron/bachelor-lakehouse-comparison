@@ -13,7 +13,11 @@ services:
       metastore:
         condition: service_healthy
       object-store:
-        condition: service_healthy
+        condition: service_started
+    networks:
+      lakehouse:
+        aliases:
+          - trino
 
   object-store:
     image: minio/minio:RELEASE.2024-03-30T09-41-56Z
@@ -24,11 +28,8 @@ services:
       - 9001:9001
       - 9000:9000
     command: ["server", "/data", "--console-address", ":9001"]
-    healthcheck:
-      test: ["CMD-SHELL", "mc alias set minio http://localhost:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD} && mc mb minio/warehouse && mc anonymous set public minio/warehouse"]
-      interval: 2s
-      timeout: 2s
-      retries: 5
+    networks:
+      - lakehouse
 
   metastore:
     image: postgres:alpine3.19
@@ -38,8 +39,33 @@ services:
       - POSTGRES_USER=postgres-user
       - POSTGRES_PASSWORD=postgres-password
       - POSTGRES_DB=iceberg
+    volumes:
+      - ./scripts/iceberg-setup.sql:/docker-entrypoint-initdb.d/iceberg-setup.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres-user -d iceberg"]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - lakehouse
+
+  superset:
+    image: apache/superset:latest
+    ports:
+      - "8088:8088"
+    environment:
+      SUPERSET_DATABASE_URI: "sqlite:////app/superset_home/superset.db"
+    volumes:
+      - superset_home:/app/superset_home
+      - ./superset_config.py:/app/pythonpath/superset_config.py
+    depends_on:
+      - controller
+    networks:
+      - lakehouse
+
+volumes:
+  superset_home:
+
+networks:
+  lakehouse:
+    external: true
