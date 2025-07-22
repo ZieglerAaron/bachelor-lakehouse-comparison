@@ -1,14 +1,10 @@
 version: '3.8'
 services:
   airflow:
-    build:
-      context: ./airflow
-      dockerfile: Dockerfile
-    image: custom-airflow:latest
-    container_name: airflow
+    image: apache/airflow:2.8.1-python3.10
     restart: always
     environment:
-      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__CORE__FERNET_KEY=airflowfernetkeyairflowfernetkey
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - AIRFLOW__WEBSERVER__SECRET_KEY=airflowsecretkeyairflowsecretkey
@@ -21,6 +17,8 @@ services:
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/plugins:/opt/airflow/plugins
       - ./airflow/requirements.txt:/requirements.txt
+      - ./delta/spark-apps:/opt/spark-apps
+      - ./delta/spark-extra-jars:/opt/spark/extra-jars
     depends_on: []
     command: >
       bash -c "
@@ -30,10 +28,7 @@ services:
         airflow webserver --port 8081
       "
     networks:
-      - iceberg_default
-      - delta_default
+      - lakehouse
 networks:
-  iceberg_default:
-    external: true
-  delta_default:
+  lakehouse:
     external: true 
