@@ -34,7 +34,7 @@ services:
   metastore:
     image: postgres:alpine3.19
     ports:
-      - 5432:5432
+      - 5433:5432
     environment:
       - POSTGRES_USER=postgres-user
       - POSTGRES_PASSWORD=postgres-password
