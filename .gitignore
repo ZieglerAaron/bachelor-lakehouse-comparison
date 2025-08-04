@@ -70,3 +70,25 @@ metastore_db/
 warehouse/
 derby.log
 Tests/B/
+
+# Delta Lake Output
+delta/spark-apps/delta-warehouse/
+delta/spark-apps/delta-tables/
+delta/spark-apps/delta-output/
+delta/spark-apps/parquet/
+
+# Spark Job Output
+**/_SUCCESS
+**/part-*
+**/.part-*
+
+# Iceberg Output (falls vorhanden)
+iceberg/warehouse/
+**/metadata/
+**/snap-*.avro
+
+# Allgemeine Output-Verzeichnisse
+**/output/
+**/data/
+**/*.parquet
+**/*.orc
