@@ -97,6 +97,16 @@ Zugriff über: http://localhost:9001
 - Username: `minioadmin`
 - Password: `minioadmin`
 
+## Test-Datenhistorie und Audit
+
+Ein einfaches Testskript `delta_history_test.py` im Verzeichnis `spark-apps` erstellt eine kleine Delta-Tabelle, führt eine Änderung durch und gibt die Versionierungs-Historie mit DESCRIBE HISTORY aus:
+
+```bash
+spark-submit /Users/aaron/UniAufMac/Bachelor/bachelor-lakehouse-comparison/delta/spark-apps/delta_history_test.py
+```
+
+Die Ausgabe zeigt die Spalten `version`, `timestamp`, `userId`, `operation` und `operationMetrics`, anhand derer man jeden Commit nachvollziehen kann.
+
 ## Setup-Anweisungen
 
 ### Delta Lake JARs
