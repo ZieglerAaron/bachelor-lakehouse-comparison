@@ -91,4 +91,5 @@ iceberg/warehouse/
 **/output/
 **/data/
 **/*.parquet
-**/*.orc
+**/*.orcspark-*.tgz
+spark-*-bin-*/
