@@ -3,14 +3,14 @@
 # Iceberg Setup Script
 # Führt grundlegende SQL-Befehle zur Initialisierung des Iceberg-Stacks aus
 
-echo "🚀 Iceberg Stack Setup wird gestartet..."
+echo "Iceberg Stack Setup wird gestartet..."
 
 # Warte auf Trino-Service
-echo "⏳ Warte auf Trino-Service..."
+echo "Warte auf Trino-Service..."
 sleep 30
 
 # Verbinde zu Trino und führe Setup-Befehle aus
-echo "📝 Führe Iceberg-Setup aus..."
+echo "Führe Iceberg-Setup aus..."
 
 docker exec -i iceberg-controller-1 trino << 'EOF'
 
@@ -41,10 +41,10 @@ SELECT * FROM example.iceberg.sample_table;
 
 EOF
 
-echo "✅ Iceberg Setup abgeschlossen!"
+echo "Iceberg Setup abgeschlossen."
 echo ""
-echo "🔗 MinIO Web UI: http://localhost:9001"
+echo "MinIO Web UI: http://localhost:9001"
 echo "   Username: minioadmin"
 echo "   Password: minioadmin"
 echo ""
-echo "📊 Trino CLI: docker exec -it iceberg-controller-1 trino"
+echo "Trino CLI: docker exec -it iceberg-controller-1 trino"

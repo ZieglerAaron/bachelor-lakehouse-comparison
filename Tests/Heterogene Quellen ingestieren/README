@@ -1,0 +1,21 @@
+# Heterogene Quellen – Ingestion-Tests
+
+Dieser Ordner dokumentiert die Ingestion-Tests für CSV/JDBC in Apache Iceberg und Delta Lake.
+
+## Testfälle
+
+- CSV-Ingestion in Iceberg: `csv_ingest_iceberg.sql`
+- CSV-Ingestion in Delta Lake: `delta/spark-apps/csv_to_delta.py`
+- JDBC → Delta Lake (Demo): `delta/spark-apps/jdbc_to_delta.py`
+
+## Ausführung
+
+1. Umgebung starten (siehe Haupt-README)
+2. Testdaten bereitstellen (siehe Skripte)
+3. Skripte ausführen (siehe jeweilige Datei)
+4. Ergebnisse verifizieren (SQL/Logs)
+
+## Hinweise
+
+- Die Skripte sind kommentiert und automatisieren die relevanten Schritte.
+- Ergebnisse werden über SQL-Queries und Konsolenausgaben verifiziert.

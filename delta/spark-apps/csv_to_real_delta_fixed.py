@@ -20,7 +20,7 @@ def main():
     print(f"1. CSV einlesen von: {csv_file}")
     
     df = spark.read.option("header", True).option("inferSchema", True).csv(csv_file)
-    print(f"   ✅ Eingelesene Zeilen: {df.count()}")
+    print(f"   Eingelesene Zeilen: {df.count()}")
     
     # PROBLEM: Delta Lake mag keine Leerzeichen in Spaltennamen!
     print("2. Spaltennamen bereinigen (Delta Lake Requirement):")
@@ -33,7 +33,7 @@ def main():
     
     # DataFrame mit bereinigten Spaltennamen
     df = df.toDF(*[c.replace(" ", "_") for c in df.columns])
-    print("   ✅ Spaltennamen bereinigt")
+    print("   Spaltennamen bereinigt")
     
     # ECHTER Delta Lake Table (jetzt mit kompatiblen Spaltennamen!)
     delta_table_path = "file:///opt/spark-apps/delta-warehouse/testdaten_delta_fixed"
@@ -45,18 +45,18 @@ def main():
         .mode("overwrite") \
         .save(delta_table_path)
     
-    print("   ✅ Delta Table erstellt!")
+    print("   Delta Table erstellt")
     
     # Verifikation: Als Delta Table lesen
     print("4. Delta Table Verifikation:")
     delta_df = spark.read.format("delta").load(delta_table_path)
-    print(f"   ✅ Delta Table Zeilen: {delta_df.count()}")
+    print(f"   Delta Table Zeilen: {delta_df.count()}")
     
     # Delta Table Metadaten prüfen
     print("5. Delta Table Metadaten:")
     delta_table = DeltaTable.forPath(spark, delta_table_path)
     history = delta_table.history()
-    print("   📊 Delta History:")
+    print("   Delta History:")
     history.select("version", "timestamp", "operation", "operationMetrics").show(truncate=False)
     
     # SQL-Interface testen
@@ -67,16 +67,16 @@ def main():
     
     spark.stop()
     
-    print("\n=== DELTA LAKE FUNKTIONEN BEWIESEN ===")
-    print("✅ Delta Table Format (echtes Lakehouse!)")
-    print("✅ ACID Transaktionen")
-    print("✅ Time Travel (History)")
-    print("✅ SQL Interface")
-    print("✅ Schema Evolution bereit")
-    print("\n=== ABER: Komplexität bewiesen! ===")
-    print("❌ JAR-Management erforderlich")
-    print("❌ Schema-Einschränkungen (keine Leerzeichen)")
-    print("❌ Mehr Setup als nur Parquet")
+    print("\n=== DELTA LAKE FUNKTIONEN ===")
+    print("Delta Table Format")
+    print("ACID Transaktionen")
+    print("Time Travel (History)")
+    print("SQL Interface")
+    print("Schema Evolution bereit")
+    print("\n=== HINWEISE ZUR KOMPLEXITÄT ===")
+    print("JAR-Management erforderlich")
+    print("Schema-Einschränkungen (keine Leerzeichen)")
+    print("Mehr Setup als nur Parquet")
 
 if __name__ == "__main__":
     main() 

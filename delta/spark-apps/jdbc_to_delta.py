@@ -46,7 +46,7 @@ jdbc_df.show(truncate=False)
 delta_path = "file:///opt/spark-apps/delta-warehouse/jdbc_demo"  # Container-Pfad
 
 jdbc_df.write.format("delta").mode("overwrite").save(delta_path)
-print("✅ Delta-Tabelle geschrieben →", delta_path)
+print("Delta-Tabelle geschrieben ->", delta_path)
 
 # ---------------------------------------------------------------------------
 # Verifikation – zählen & History – beweist echten Delta-Log
@@ -55,7 +55,7 @@ print("✅ Delta-Tabelle geschrieben →", delta_path)
 from delta.tables import DeltaTable
 
 delta_tbl = DeltaTable.forPath(spark, delta_path)
-print("👀 Delta-Zeilen:", delta_tbl.toDF().count())
+print("Delta-Zeilen:", delta_tbl.toDF().count())
 
 delta_tbl.history().show(truncate=False)
 

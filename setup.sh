@@ -5,23 +5,23 @@
 
 set -e
 
-echo "🎓 Bachelorarbeit: Vergleich Apache Iceberg vs. Delta Lake"
+echo "Bachelorarbeit: Vergleich Apache Iceberg vs. Delta Lake"
 echo "=========================================================="
 echo ""
 
 # Prüfe ob Docker installiert ist
 if ! command -v docker &> /dev/null; then
-    echo "❌ Docker ist nicht installiert. Bitte installiere Docker zuerst."
+    echo "Docker ist nicht installiert. Bitte installiere Docker zuerst."
     exit 1
 fi
 
 # Prüfe ob Docker Compose installiert ist
 if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
-    echo "❌ Docker Compose ist nicht installiert. Bitte installiere Docker Compose zuerst."
+    echo "Docker Compose ist nicht installiert. Bitte installiere Docker Compose zuerst."
     exit 1
 fi
 
-echo "✅ Docker und Docker Compose sind verfügbar"
+echo "Docker und Docker Compose sind verfügbar"
 echo ""
 
 # Zeige Menü
@@ -38,31 +38,31 @@ read -p "Deine Wahl (1-5): " choice
 case $choice in
     1)
         echo ""
-        echo "🚀 Starte Iceberg Stack..."
+        echo "Starte Iceberg Stack..."
         cd iceberg
         docker compose up -d
         echo ""
-        echo "⏳ Warte auf Services..."
+        echo "Warte auf Services..."
         sleep 30
         echo ""
-        echo "📝 Führe Iceberg Setup aus..."
+        echo "Führe Iceberg Setup aus..."
         ./scripts/iceberg-setup.sh
         echo ""
-        echo "✅ Iceberg Stack ist bereit!"
-        echo "🔗 Trino UI: http://localhost:8080"
-        echo "🔗 MinIO UI: http://localhost:9001"
+        echo "Iceberg Stack ist bereit."
+        echo "Trino UI: http://localhost:8080"
+        echo "MinIO UI: http://localhost:9001"
         ;;
     2)
         echo ""
-        echo "🚀 Starte Delta Lake Stack..."
+        echo "Starte Delta Lake Stack..."
         cd delta
         docker compose up -d
         echo ""
-        echo "✅ Delta Lake Stack ist gestartet!"
-        echo "🔗 Spark Master UI: http://localhost:8080"
-        echo "🔗 MinIO UI: http://localhost:9001"
+        echo "Delta Lake Stack ist gestartet."
+        echo "Spark Master UI: http://localhost:8080"
+        echo "MinIO UI: http://localhost:9001"
         echo ""
-        echo "📝 Nächste Schritte:"
+        echo "Nächste Schritte:"
         echo "1. Warte bis alle Services gestartet sind"
         echo "2. Führe die Python-Anwendung aus:"
         echo "   docker exec -it delta-spark-worker spark-submit \\"
@@ -72,9 +72,9 @@ case $choice in
         ;;
     3)
         echo ""
-        echo "🚀 Starte beide Stacks..."
+        echo "Starte beide Stacks..."
         echo ""
-        echo "⚠️  Hinweis: Beide Stacks verwenden die gleichen Ports für MinIO."
+        echo "Hinweis: Beide Stacks verwenden die gleichen Ports für MinIO."
         echo "   Du kannst nur einen Stack gleichzeitig verwenden."
         echo ""
         read -p "Möchtest du fortfahren? (y/N): " confirm
@@ -87,14 +87,14 @@ case $choice in
             cd delta
             docker compose up -d
             echo ""
-            echo "✅ Beide Stacks sind gestartet!"
+            echo "Beide Stacks sind gestartet."
         else
             echo "Setup abgebrochen."
         fi
         ;;
     4)
         echo ""
-        echo "📁 Projektstruktur:"
+        echo "Projektstruktur:"
         echo ""
         echo "bachelor-lakehouse-comparison/"
         echo "│"
@@ -125,13 +125,13 @@ case $choice in
         exit 0
         ;;
     *)
-        echo "❌ Ungültige Auswahl. Bitte wähle 1-5."
+        echo "Ungültige Auswahl. Bitte wähle 1-5."
         exit 1
         ;;
 esac
 
 echo ""
-echo "📚 Weitere Informationen findest du in den README-Dateien:"
+echo "Weitere Informationen findest du in den README-Dateien:"
 echo "   - Haupt-README: README.md"
 echo "   - Iceberg: iceberg/README_ICEBERG.md"
 echo "   - Delta Lake: delta/README_DELTA.md" 

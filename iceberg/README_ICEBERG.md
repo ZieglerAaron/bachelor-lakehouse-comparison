@@ -1,104 +1,67 @@
-# Apache Iceberg Stack
+# Apache Iceberg: Ingestion- und Monitoring-Tests
 
-Dieser Stack implementiert Apache Iceberg mit Trino, PostgreSQL und MinIO.
+Dieser Ordner beschreibt die Iceberg-spezifischen Tests und das notwendige Setup.
 
 ## Komponenten
 
-- **Trino**: SQL Query Engine
-- **Apache Iceberg**: Table Format
-- **PostgreSQL**: Metastore
-- **MinIO**: Object Storage (S3-kompatibel)
+- Trino (SQL Engine)
+- Apache Iceberg (Table Format)
+- PostgreSQL (Metastore)
+- MinIO (Object Storage, S3-kompatibel)
 
-## Schnellstart
+## Setup
 
-### 1. Stack starten
+1) Stack starten
 ```bash
 docker compose up -d
 ```
 
-### 2. Setup ausführen
+2) Basissetup ausführen (Schema/Tabelle/Datenbeispiele)
 ```bash
 ./scripts/iceberg-setup.sh
 ```
 
-### 3. Trino CLI verbinden
+3) Trino CLI öffnen
 ```bash
 docker exec -it iceberg-trino-1 trino
+```
+
+## Ingestion-Test (CSV via Spark, Abfrage via Trino)
+
+- Script: `csv_to_iceberg.py` (Projektwurzel)
+- Voraussetzungen: laufender Iceberg-Stack
+- Ausführung (Beispiel):
+```bash
+docker run --network lakehouse bitnami/spark:3.2 \
+  spark-submit --master 'local[*]' \
+  --packages org.apache.iceberg:iceberg-spark-runtime-3.2_2.12:1.1.0,org.postgresql:postgresql:42.5.4 \
+  /workspace/bachelor-lakehouse-comparison/csv_to_iceberg.py
+```
+
+- Verifikation (Trino):
+```sql
+SELECT * FROM iceberg.default.testdaten LIMIT 20;
+```
+
+## Monitoring-/Audit-Test (History, Time Travel)
+
+- Script: `delta/spark-apps/iceberg_history_test.py`
+- Ablauf:
+  - Tabelle schreiben, Datensatz löschen
+  - Historie über Metadata-Table `...history` anzeigen
+  - Snapshot-ID ermitteln und früheren Zustand lesen
+- Ausführung (Beispiel):
+```bash
+spark-submit delta/spark-apps/iceberg_history_test.py
 ```
 
 ## Konfiguration
 
-### Iceberg Catalog
-Die Iceberg-Konfiguration befindet sich in `etc/catalog/iceberg.properties`.
-
-### MinIO Credentials
-- Access Key: `minioadmin`
-- Secret Key: `minioadmin`
-- Endpoint: `http://localhost:9000`
-
-## Beispiel-Queries
-
-### Setup-Script ausführen
-Das Setup-Script `scripts/iceberg-setup.sql` enthält alle notwendigen SQL-Befehle:
-
-```bash
-# Automatisch ausführen
-./scripts/iceberg-setup.sh
-
-# Oder manuell in Trino CLI
-docker exec -it iceberg-trino-1 trino
-```
-
-### Tabelle erstellen
-```sql
-CREATE SCHEMA IF NOT EXISTS iceberg.iceberg;
-CREATE TABLE iceberg.iceberg.sample_table (
-    id BIGINT,
-    name VARCHAR,
-    created_at TIMESTAMP
-) WITH (
-    format = 'PARQUET',
-    location = 's3a://iceberg/'
-);
-```
-
-### Daten einfügen
-```sql
-INSERT INTO iceberg.iceberg.sample_table VALUES 
-(1, 'Test 1', TIMESTAMP '2024-01-01 10:00:00'),
-(2, 'Test 2', TIMESTAMP '2024-01-01 11:00:00');
-```
-
-### Daten abfragen
-```sql
-SELECT * FROM iceberg.iceberg.sample_table;
-```
-
-## Dateien aus dem Original-Repo
-
-- `docker-compose.yml.original`: Ursprüngliche Docker Compose-Konfiguration
-- `scripts/iceberg-setup.sql`: SQL-Setup-Script aus dem Original-Repo
-- `etc/`: Erweiterte Konfigurationsdateien
-
-## MinIO Web UI
-
-Zugriff über: http://localhost:9001
-- Username: `minioadmin`
-- Password: `minioadmin`
+- Iceberg-Katalog: `etc/catalog/iceberg.properties`
+- MinIO Endpunkt: `http://localhost:9000`
 
 ## Troubleshooting
 
-### Container-Logs anzeigen
-```bash
-docker compose logs -f
-```
-
-### Stack stoppen
-```bash
-docker compose down
-```
-
-### Stack mit Volumes löschen
-```bash
-docker compose down -v
-```
+- Logs ansehen: `docker compose logs -f`
+- Stack stoppen: `docker compose down`
+- Stack inkl. Volumes löschen: `docker compose down -v`

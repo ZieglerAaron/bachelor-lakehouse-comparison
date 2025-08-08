@@ -1,96 +1,68 @@
-# BA: Vergleich Apache Iceberg vs. Delta Lake
+# Bachelor Lakehouse Comparison: Ingestion- und Monitoring-Tests
 
-Dieses Repo enthält zwei vollständig getrennte Stacks:
+Dieses Repository enthält zwei zentrale Testkategorien:
 
-- `iceberg/`  
-  - Trino + Iceberg + Postgres + MinIO  
-  - DDL/DML/Query-Beispiele  
-  - Anleitung in `README_ICEBERG.md`
+1) Ingestion-Tests (CSV/JDBC) für Apache Iceberg und Delta Lake
+2) Monitoring-/Audit-Tests (History/Time Travel) für Delta Lake und Iceberg
 
-- `delta/`  
-  - Spark + Delta + Hive Metastore + MinIO  
-  - CSV-to-Delta Beispiel  
-  - Anleitung in `README_DELTA.md`
+## Ingestion-Tests
 
-## Schnellstart
-
-### Repository klonen
+### Apache Iceberg (CSV über Spark, Abfrage über Trino)
+- Script: `csv_to_iceberg.py`
+- Setup: `cd iceberg && docker compose up -d`
+- Ausführung (Beispiel):
 ```bash
-git clone git@github.com:<dein-user>/bachelor-lakehouse-comparison.git
-cd bachelor-lakehouse-comparison
+docker run --network lakehouse bitnami/spark:3.2 \
+  spark-submit --master 'local[*]' \
+  --packages org.apache.iceberg:iceberg-spark-runtime-3.2_2.12:1.1.0,org.postgresql:postgresql:42.5.4 \
+  csv_to_iceberg.py
+```
+- Verifikation per SQL (Trino CLI):
+```sql
+SELECT * FROM iceberg.default.testdaten LIMIT 20;
 ```
 
-### Automatisches Setup
+### Delta Lake (CSV über Spark)
+- Script: `delta/spark-apps/csv_to_delta.py`
+- Ausführung (Beispiel):
 ```bash
-./setup.sh
-```
-Das Setup-Script führt dich durch die Einrichtung und startet die gewünschten Stacks.
-
-### Manuelles Setup
-
-#### Iceberg Stack starten
-```bash
-cd iceberg
-docker compose up -d
-# danach: ./scripts/iceberg-setup.sh (oder SQL-Befehle aus README_ICEBERG.md)
+spark-submit --master spark://localhost:7077 \
+  --packages io.delta:delta-core_2.12:2.4.0 \
+  delta/spark-apps/csv_to_delta.py
 ```
 
-#### Delta Lake Stack starten
-```bash
-cd delta
-docker compose up -d
-# ggf. JARs in hive-config und spark-config kopieren (siehe README_DELTA.md)
-# dann: spark-submit für csv_to_delta.py
+### JDBC → Delta Lake (Demo)
+- Script: `delta/spark-apps/jdbc_to_delta.py`
+- Demonstriert JDBC-Quelle und Verifikation über Delta-History.
+
+## Monitoring-/Audit-Tests (History, Time Travel)
+
+### Delta Lake History/Time Travel
+- Script: `delta/spark-apps/delta_history_test.py`
+- Führt Update-Operation aus und zeigt `DESCRIBE HISTORY`; liest Version `versionAsOf=0`.
+
+### Iceberg History/Time Travel
+- Script: `delta/spark-apps/iceberg_history_test.py`
+- Löscht Datensatz, zeigt Metadata-Table `...history`, liest mittels `snapshot-id` einen früheren Zustand.
+
+## Projektstruktur (Auszug)
+```
+Tests/Heterogene Quellen ingestieren/
+├── csv_ingest_iceberg.sql
+└── README
+
+delta/
+└── spark-apps/
+    ├── csv_to_delta.py
+    ├── jdbc_to_delta.py
+    ├── delta_history_test.py
+    └── iceberg_history_test.py
+
+iceberg/
+└── scripts/
+    └── iceberg-setup.sh
 ```
 
-## Projektstruktur
-
-```
-bachelor-lakehouse-comparison/
-│
-├── README.md
-├── setup.sh
-├── .gitignore
-│
-├── iceberg/
-│   ├── docker-compose.yml
-│   ├── docker-compose.yml.original    # Aus tschaub/trino-example
-│   ├── etc/
-│   │   └── catalog/iceberg.properties
-│   ├── scripts/
-│   │   ├── iceberg-setup.sh
-│   │   └── iceberg-setup.sql         # Aus tschaub/trino-example
-│   └── README_ICEBERG.md
-│
-└── delta/
-    ├── docker-compose.yml
-    ├── docker-compose.yml.original    # Aus kemonoske/spark-minio-delta-lakehouse-docker
-    ├── Dockerfile                     # Aus kemonoske/spark-minio-delta-lakehouse-docker
-    ├── hive-config/
-    │   └── hive-site.xml
-    ├── spark-config/
-    │   └── spark-defaults.conf
-    ├── spark-apps/
-    │   └── csv_to_delta.py
-    ├── test-data/                     # Aus kemonoske/spark-minio-delta-lakehouse-docker
-    │   └── people-100.csv
-    └── README_DELTA.md
-```
-
-## Original-Repositories
-
-Dieses Monorepo basiert auf den folgenden Beispiel-Repositories:
-
-### Apache Iceberg Stack
-- **Quelle**: [tschaub/trino-example](https://github.com/tschaub/trino-example)
-- **Inhalte**: Docker Compose, SQL-Setup, Konfigurationsdateien
-- **Lizenz**: Apache 2.0
-
-### Delta Lake Stack  
-- **Quelle**: [kemonoske/spark-minio-delta-lakehouse-docker](https://github.com/kemonoske/spark-minio-delta-lakehouse-docker)
-- **Inhalte**: Docker Compose, Spark-Apps, Test-Daten, Konfigurationsdateien
-- **Lizenz**: Apache 2.0
-
-## Bachelorarbeit
-
-Dieses Repository dient als Grundlage für die Bachelorarbeit zum Vergleich von Apache Iceberg und Delta Lake im Kontext von Data Lakehouses.
+## Hinweise
+- Nicht benötigte Minimal-/Performance-Skripte wurden entfernt.
+- Alle Ausgaben und Dokumentation sind neutral formuliert (ohne Emojis/Emoticons).
